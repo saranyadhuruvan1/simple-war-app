@@ -50,5 +50,11 @@
 
         </plugins>
     </build>
+<distributionManagement>
+    <repository>
+        <id>nexus</id>
+        <url>http://172.31.21.42:8081/repository/vprofile-deploy/</url>
+    </repository>
+</distributionManagement>
 
 </project>
