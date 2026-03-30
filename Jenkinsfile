@@ -16,7 +16,13 @@ pipeline {
                 sh "mvn clean package -DskipTests"
             }
         }
-
+         stage('Build Docker Image') {
+            steps {
+                script {
+                    dockerImage = docker.build("vprofile-app:${BUILD_NUMBER}")
+                }
+            }
+        }
         stage('Upload to Nexus') {
             steps {
                 withCredentials([usernamePassword(
