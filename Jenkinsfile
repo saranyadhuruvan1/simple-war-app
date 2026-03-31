@@ -31,7 +31,17 @@ pipeline {
                 }
             }
         }
-
+   stage('Debug Credentials') {
+    steps {
+        withCredentials([usernamePassword(
+            credentialsId: 'nexus_login',
+            usernameVariable: 'NEXUS_USER',
+            passwordVariable: 'NEXUS_PASS'
+        )]) {
+            sh 'echo "Injected user: $NEXUS_USER"'
+        }
+    }
+}
         stage('Upload to Nexus') {
             steps {
                 withCredentials([usernamePassword(
@@ -48,17 +58,7 @@ pipeline {
                 }
             }
         }
-       stage('Debug Credentials') {
-    steps {
-        withCredentials([usernamePassword(
-            credentialsId: 'nexus_login',
-            usernameVariable: 'NEXUS_USER',
-            passwordVariable: 'NEXUS_PASS'
-        )]) {
-            sh 'echo "Injected user: $NEXUS_USER"'
-        }
-    }
-}
+       
 
         stage('ECR Login') {
             steps {
