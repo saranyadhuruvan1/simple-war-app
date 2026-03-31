@@ -51,10 +51,16 @@
         </plugins>
     </build>
 <distributionManagement>
+    <snapshotRepository>
+        <id>nexus-snapshots</id>
+        <url>http://100.55.36.88:8081/repository/simple-war-project/</url>
+    </snapshotRepository>
+
     <repository>
-        <id>nexus</id>
-        <url>http://172.31.21.42:8081/repository/vprofile-deploy/</url>
+        <id>nexus-releases</id>
+        <url>http://100.55.36.88:8081/repository/simple-war-project-realease/</url>
     </repository>
 </distributionManagement>
+
 
 </project>
