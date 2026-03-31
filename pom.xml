@@ -49,8 +49,6 @@
     </configuration>
 </plugin>
 
-            </plugin>
-
         </plugins>
     </build>
 <distributionManagement>
