@@ -1,6 +1,13 @@
 pipeline {
     agent any
 
+    environment {
+        AWS_REGION = "us-east-1"
+        ECR_URL = "160180440306.dkr.ecr.us-east-1.amazonaws.com"
+        REPO_NAME = "simple-war-app"
+        IMAGE_TAG = "${BUILD_NUMBER}"
+    }
+
     stages {
 
         stage('Checkout') {
@@ -11,18 +18,20 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Build WAR') {
             steps {
                 sh "mvn clean package -DskipTests"
             }
         }
-         stage('Build Docker Image') {
+
+        stage('Build Docker Image') {
             steps {
                 script {
-                    dockerImage = docker.build("simple-app:${BUILD_NUMBER}")
+                    dockerImage = docker.build("${REPO_NAME}:${IMAGE_TAG}")
                 }
             }
         }
+
         stage('Upload to Nexus') {
             steps {
                 withCredentials([usernamePassword(
@@ -52,11 +61,12 @@ pipeline {
         stage('Tag & Push Image to ECR') {
             steps {
                 sh '''
-                    docker tag ${REPO_NAME}:latest ${ECR_URL}/${REPO_NAME}:${IMAGE_TAG}
+                    docker tag ${REPO_NAME}:${IMAGE_TAG} ${ECR_URL}/${REPO_NAME}:${IMAGE_TAG}
                     docker push ${ECR_URL}/${REPO_NAME}:${IMAGE_TAG}
                 '''
             }
         }
+
         stage('Archive Artifact') {
             steps {
                 archiveArtifacts artifacts: 'target/*.war', fingerprint: true
@@ -66,11 +76,10 @@ pipeline {
 
     post {
         success {
-            echo "🎉 Build + Nexus Upload completed successfully!"
+            echo "🎉 Build + Nexus Upload + ECR Push completed successfully!"
         }
         failure {
             echo "❌ Build failed!"
         }
     }
 }
-
