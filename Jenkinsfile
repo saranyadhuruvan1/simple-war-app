@@ -40,6 +40,23 @@ pipeline {
             }
         }
 
+        stage('ECR Login') {
+            steps {
+                sh '''
+                    aws ecr get-login-password --region ${AWS_REGION} \
+                    | docker login --username AWS --password-stdin ${ECR_URL}
+                '''
+            }
+        }
+
+        stage('Tag & Push Image to ECR') {
+            steps {
+                sh '''
+                    docker tag ${REPO_NAME}:latest ${ECR_URL}/${REPO_NAME}:${IMAGE_TAG}
+                    docker push ${ECR_URL}/${REPO_NAME}:${IMAGE_TAG}
+                '''
+            }
+        }
         stage('Archive Artifact') {
             steps {
                 archiveArtifacts artifacts: 'target/*.war', fingerprint: true
