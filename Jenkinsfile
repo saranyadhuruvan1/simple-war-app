@@ -84,6 +84,26 @@ pipeline {
             }
         }
     }
+            stage('Update Kubeconfig') {
+            steps {
+                sh '''
+                    aws eks update-kubeconfig \
+                        --region ${AWS_REGION} \
+                        --name my-standard-eks
+                '''
+            }
+        }
+
+        stage('Deploy to EKS') {
+            steps {
+                sh '''
+                    kubectl set image deployment/simple-war-app \
+                        simple-war-app=${ECR_URL}/${REPO_NAME}:${IMAGE_TAG} --record
+
+                    kubectl rollout status deployment/simple-war-app
+                '''
+            }
+        }
 
     post {
         success {
