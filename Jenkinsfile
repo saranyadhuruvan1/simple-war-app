@@ -31,17 +31,19 @@ pipeline {
                 }
             }
         }
-   stage('Debug Credentials') {
-    steps {
-        withCredentials([usernamePassword(
-            credentialsId: 'nexus_login',
-            usernameVariable: 'NEXUS_USER',
-            passwordVariable: 'NEXUS_PASS'
-        )]) {
-            sh 'echo "Injected user: $NEXUS_USER"'
+
+        stage('Debug Credentials') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'nexus_login',
+                    usernameVariable: 'NEXUS_USER',
+                    passwordVariable: 'NEXUS_PASS'
+                )]) {
+                    sh 'echo "Injected user: $NEXUS_USER"'
+                }
+            }
         }
-    }
-}
+
         stage('Upload to Nexus') {
             steps {
                 withCredentials([usernamePassword(
@@ -58,7 +60,6 @@ pipeline {
                 }
             }
         }
-       
 
         stage('ECR Login') {
             steps {
@@ -83,8 +84,8 @@ pipeline {
                 archiveArtifacts artifacts: 'target/*.war', fingerprint: true
             }
         }
-    }
-            stage('Update Kubeconfig') {
+
+        stage('Update Kubeconfig') {
             steps {
                 sh '''
                     aws eks update-kubeconfig \
@@ -104,13 +105,15 @@ pipeline {
                 '''
             }
         }
+    }
 
     post {
         success {
-            echo "🎉 Build + Nexus Upload + ECR Push completed successfully!"
+            echo "🎉 Build + Nexus Upload + ECR Push + EKS Deploy completed successfully!"
         }
         failure {
             echo "❌ Build failed!"
         }
     }
 }
+
