@@ -48,7 +48,7 @@ jobs:
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}          # from ec2-teraform user
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}  # from ec2-teraform user
-        role-to-assume: arn:aws:iam::160180440306:role/ECR-permission
+       # role-to-assume: arn:aws:iam::160180440306:role/ECR-permission
         aws-region: ${{ env.AWS_REGION }}
 
     - name: Verify caller identity
